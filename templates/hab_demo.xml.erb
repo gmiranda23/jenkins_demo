@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description>Builds a basic habitat artifact</description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>PKG</name>
+          <description>Name of hab core package to build</description>
+          <defaultValue>redis</defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>ORIGIN</name>
+          <description>Name of hab origin for PKG (will match keys)</description>
+          <defaultValue>core</defaultValue>
+        </hudson.model.StringParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+  </properties>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command># Clean up/regenerate keys adhoc
+if [ -f $HOME/.hab/cache/keys/$ORIGIN-*.sig.key ]; then
+  rm $HOME/.hab/cache/keys/$ORIGIN-*.sig.key
+  rm $HOME/.hab/cache/keys/$ORIGIN-*.pub
+  sudo rm /hab/cache/keys/$ORIGIN-*.sig.key /hab/cache/keys/$ORIGIN-*.pub
+fi
+
+sudo hab origin key generate $ORIGIN
+
+mkdir -p $JENKINS_HOME/.hab/cache/keys
+sudo cp /hab/cache/keys/$ORIGIN-*.sig.key /hab/cache/keys/$ORIGIN-*.pub $JENKINS_HOME/.hab/cache/keys/
+
+# Build the requested package (change origin if necessary)
+cd $JENKINS_HOME/core-plans
+sed -i &quot;s/pkg_origin=core/pkg_origin=$ORIGIN/&quot; $PKG/plan.sh
+sudo hab pkg build $PKG -k $ORIGIN</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers>
+    <hudson.tasks.Fingerprinter>
+      <targets>/var/lib/jenkins/core-plans/results/*.hart</targets>
+    </hudson.tasks.Fingerprinter>
+  </publishers>
+  <buildWrappers/>
+</project>

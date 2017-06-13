@@ -1,10 +1,14 @@
 name 'jenkins_demo'
-maintainer 'The Authors'
-maintainer_email 'you@example.com'
+maintainer 'George Miranda'
+maintainer_email 'gmiranda@chef.io'
 license 'all_rights'
-description 'Installs/Configures jenkins_demo'
-long_description 'Installs/Configures jenkins_demo'
+description 'Sets up a Jenkins Server to build Habitat plans'
+long_description 'Sets up a Jenkins Server to build Habitat plans'
 version '0.1.0'
+
+depends 'jenkins'
+depends 'habitat'
+depends 'sudo'
 
 # If you upload to Supermarket you should set this so your cookbook
 # gets a `View Issues` link
