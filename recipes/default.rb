@@ -6,16 +6,34 @@
 
 # Setup Jenkins
 include_recipe 'jenkins::master'
+jenkins_plugin 'parameterized-trigger'
+jenkins_plugin 'build-pipeline-plugin'
 
-# Create the demo Jenkins job
-hab_demo = File.join(Chef::Config[:file_cache_path], 'hab_demo.xml')
-
-template hab_demo do
-  source 'hab_demo.xml.erb'
+template '/var/lib/jenkins/config.xml' do
+  source 'config.xml.erb'
+  user 'jenkins'
+  group 'jenkins'
+   notifies :restart, 'service[jenkins]', :immediately
 end
 
-jenkins_job 'hab_demo' do
-  config hab_demo
+# Create the demo Jenkins job
+hab_build = File.join(Chef::Config[:file_cache_path], 'hab_build.xml')
+hab_dockerize = File.join(Chef::Config[:file_cache_path], 'hab_dockerize.xml')
+
+template hab_build do
+  source 'hab_build.xml.erb'
+end
+
+jenkins_job 'hab_build' do
+  config hab_build
+end
+
+template hab_dockerize do
+  source 'hab_dockerize.xml.erb'
+end
+
+jenkins_job 'hab_dockerize' do
+  config hab_dockerize
 end
 
 # Give jenkins sudo permissions (required by hab)
@@ -40,4 +58,4 @@ git '/var/lib/jenkins/core-plans' do
 end
 
 # Kick off the hab_demo Jenkins job
-include_recipe 'jenkins_demo::run_job'
+#include_recipe 'jenkins_demo::run_job'
