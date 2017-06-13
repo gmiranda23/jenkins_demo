@@ -4,7 +4,7 @@ maintainer_email 'gmiranda@chef.io'
 license 'all_rights'
 description 'Sets up a Jenkins Server to build Habitat plans'
 long_description 'Sets up a Jenkins Server to build Habitat plans'
-version '0.1.0'
+version '0.1.2'
 
 depends 'jenkins'
 depends 'habitat'

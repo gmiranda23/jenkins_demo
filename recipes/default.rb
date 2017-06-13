@@ -2,7 +2,7 @@
 # Cookbook Name:: jenkins_demo
 # Recipe:: default
 #
-# Copyright (c) 2017 The Authors, All Rights Reserved.
+# Copyright (c) 2017 George Miranda, All Rights Reserved.
 
 # Setup Jenkins
 include_recipe 'jenkins::master'
@@ -33,7 +33,7 @@ hab_install 'install habitat'
 package 'git'
 
 git '/var/lib/jenkins/core-plans' do
-  repository 'git://github.com/habitat-sh/core-plans.git'
+  repository "git://github.com/#{node['jenkins_demo']['hab_repo']}.git"
   revision 'master'
   user 'jenkins'
   group 'jenkins'
