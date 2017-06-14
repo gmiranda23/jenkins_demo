@@ -47,9 +47,18 @@ sudo hab pkg build $PKG -k $ORIGIN</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
-    <hudson.tasks.Fingerprinter>
-      <targets>/var/lib/jenkins/core-plans/results/*.hart</targets>
-    </hudson.tasks.Fingerprinter>
+    <hudson.plugins.parameterizedtrigger.BuildTrigger plugin="parameterized-trigger@2.17">
+      <configs>
+        <hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
+          <configs>
+            <hudson.plugins.parameterizedtrigger.CurrentBuildParameters/>
+          </configs>
+          <projects>hab_dockerize, </projects>
+          <condition>SUCCESS</condition>
+          <triggerWithNoParameters>false</triggerWithNoParameters>
+        </hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
+      </configs>
+    </hudson.plugins.parameterizedtrigger.BuildTrigger>
   </publishers>
   <buildWrappers/>
 </project>
