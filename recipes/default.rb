@@ -47,14 +47,16 @@ end
 # Install Habitat
 hab_install 'install habitat'
 
-# Clone core package repo for Jenkins
+# We'll need git to clone hab repos
 package 'git'
 
-git '/var/lib/jenkins/core-plans' do
-  repository "git://github.com/#{node['jenkins_demo']['hab_repo']}.git"
-  revision 'master'
-  user 'jenkins'
-  group 'jenkins'
+# We need Docker to dockerize hab artifacts
+docker_installation 'default' do
+  action :create
+end
+
+docker_service 'default' do
+  action [:create, :start]
 end
 
 # Kick off the hab_demo Jenkins job

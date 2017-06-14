@@ -6,6 +6,5 @@
 
 default['jenkins_demo']['job_parameter']['origin'] = 'mydemo'
 default['jenkins_demo']['job_parameter']['pkg'] = 'redis'
-
 # in use this fetches from "git://github.com/#{hab_repo}.git"
-default['jenkins_demo']['hab_repo'] = 'habitat-sh/core-plans'
+default['jenkins_demo']['job_parameter']['repo'] = 'habitat-sh/core-plans'

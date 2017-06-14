@@ -16,6 +16,11 @@
           <description>Name of hab origin to sign packages</description>
           <defaultValue>core</defaultValue>
         </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>REPO</name>
+          <description>Repo where your plan.sh lives</description>
+          <defaultValue>habitat-sh/core-plans</defaultValue>
+        </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
   </properties>
@@ -29,9 +34,17 @@
   <builders>
     <hudson.tasks.Shell>
       <command># We should already have our keys, so don&apos;t worry about it
+# Because hab built the package non-interactively, it doesn&apos;t get installed
+# Find our previously built .hart, install it, then dockerize it
 
-cd $JENKINS_HOME/core-plans
-sudo hab pkg export docker $ORIGIN/$PKG</command>
+REPO_DIR=`basename $REPO`
+myhart=`ls -t $JENKINS_HOME/jobs/hab_build/workspace/$REPO_DIR/results/$ORIGIN-$PKG-*.hart`
+
+sudo hab pkg install $myhart
+sudo hab pkg export docker $ORIGIN/$PKG
+
+# Show me the results
+sudo docker image list</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers/>

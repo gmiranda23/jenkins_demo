@@ -16,6 +16,11 @@
           <description>Name of hab origin for PKG (will match keys)</description>
           <defaultValue>core</defaultValue>
         </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>REPO</name>
+          <description>Github repo where your plan.sh lives</description>
+          <defaultValue>habitat-sh/core-plans</defaultValue>
+        </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
   </properties>
@@ -28,7 +33,16 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command># Clean up/regenerate keys adhoc
+      <command># Get a clean repo
+REPO_DIR=`basename $REPO`
+
+if [ -d $WORKSPACE/$REPO_DIR ]; then
+  sudo rm -rf $WORKSPACE/$REPO_DIR
+fi
+git clone git://github.com/$REPO.git
+cd $WORKSPACE/$REPO_DIR
+
+# Clean up/regenerate keys adhoc
 if [ -f $HOME/.hab/cache/keys/$ORIGIN-*.sig.key ]; then
   rm $HOME/.hab/cache/keys/$ORIGIN-*.sig.key
   rm $HOME/.hab/cache/keys/$ORIGIN-*.pub
@@ -40,13 +54,15 @@ sudo hab origin key generate $ORIGIN
 mkdir -p $JENKINS_HOME/.hab/cache/keys
 sudo cp /hab/cache/keys/$ORIGIN-*.sig.key /hab/cache/keys/$ORIGIN-*.pub $JENKINS_HOME/.hab/cache/keys/
 
-# Build the requested package (change origin if necessary)
-cd $JENKINS_HOME/core-plans
-sed -i &quot;s/pkg_origin=core/pkg_origin=$ORIGIN/&quot; $PKG/plan.sh
+# Build the requested package (forceably change origin)
+sed -i &quot;s/^pkg_origin=.*/pkg_origin=$ORIGIN/&quot; $PKG/plan.sh
 sudo hab pkg build $PKG -k $ORIGIN</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
+    <hudson.tasks.Fingerprinter>
+      <targets>*/results/*.hart</targets>
+    </hudson.tasks.Fingerprinter>
     <hudson.plugins.parameterizedtrigger.BuildTrigger plugin="parameterized-trigger@2.17">
       <configs>
         <hudson.plugins.parameterizedtrigger.BuildTriggerConfig>
