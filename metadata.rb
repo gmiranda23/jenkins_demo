@@ -10,6 +10,7 @@ depends 'jenkins'
 depends 'habitat'
 depends 'sudo'
 depends 'docker'
+depends 'delivery-truck'
 
 # If you upload to Supermarket you should set this so your cookbook
 # gets a `View Issues` link
