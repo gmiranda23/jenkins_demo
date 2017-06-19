@@ -59,5 +59,8 @@ docker_service 'default' do
   action [:create, :start]
 end
 
+# Configure push-jobs support
+#include_recipe 'jenkins_demo::pushjobs'
+
 # Kick off the hab_demo Jenkins job
 #include_recipe 'jenkins_demo::run_job'

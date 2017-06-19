@@ -4,13 +4,14 @@ maintainer_email 'gmiranda@chef.io'
 license 'all_rights'
 description 'Sets up a Jenkins Server to build Habitat plans'
 long_description 'Sets up a Jenkins Server to build Habitat plans'
-version '0.2.1'
+version '0.3.0'
 
 depends 'jenkins'
 depends 'habitat'
 depends 'sudo'
 depends 'docker'
 depends 'delivery-truck'
+depends 'push-jobs'
 
 # If you upload to Supermarket you should set this so your cookbook
 # gets a `View Issues` link
