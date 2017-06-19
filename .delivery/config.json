@@ -10,6 +10,7 @@
       }
   },
   "skip_phases": [
+    "provision",
     "functional",
     "unit",
     "lint",
